@@ -81,7 +81,7 @@ if __name__ == "__main__":
             zed.retrieve_objects(objects, obj_runtime_param)
             # Update GL view
             timestamp = str(zed.get_timestamp(sl.TIME_REFERENCE.IMAGE).get_microseconds() / 1000000.0)
-            viewer.update_view(image, objects)
+            viewer.update_view(image, objects, timestamp)
             frames += 1
             if frames == 60:
                 time_time = time.time()
