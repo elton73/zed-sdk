@@ -1,6 +1,6 @@
 import os
 import csv
-def choose_velocity_csv(recording_path):
+def choose_csv(recording_path):
     datasets = []
     indexes = []
     print("Enter s to begin or q to quit")
@@ -14,7 +14,7 @@ def choose_velocity_csv(recording_path):
             else:
                 print("No data!")
         elif counter.isnumeric() and counter not in indexes:
-            path = os.path.join(recording_path, f'Velocities_{counter}.csv')
+            path = os.path.join(recording_path, f'Raw_Data_{counter}.csv')
             if not os.path.exists(path):
                 print(path)
                 print("No such recording! Please Try Again")

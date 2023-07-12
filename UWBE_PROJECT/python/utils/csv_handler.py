@@ -1,6 +1,6 @@
 import os
 import csv
-from UWBE_PROJECT.python.utils.inputs import choose_velocity_csv
+from UWBE_PROJECT.python.utils.inputs import choose_csv
 class CsvHandler:
     def __init__(self):
         self._csv_file = None
@@ -29,7 +29,7 @@ class CsvHandler:
             self._csv_file = None
 
     def read_csv(self):
-        return choose_velocity_csv(self._path_string)
+        return choose_csv(self._path_string)
 
 
 
