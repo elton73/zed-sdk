@@ -600,8 +600,9 @@ class GLViewer:
         else:
             return _object_data.tracking_state == sl.OBJECT_TRACKING_STATE.OK or _object_data.tracking_state == sl.OBJECT_TRACKING_STATE.OFF
 
-    def update_view(self, _image, _objs):       # _objs of type sl.Objects
+    def update_view(self, _image, _objs, _time):       # _objs of type sl.Objects
         self.mutex.acquire()
+        self.time = _time
 
         # update image
         self.image_handler.push_new_image(_image)
