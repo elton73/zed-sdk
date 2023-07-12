@@ -5,7 +5,7 @@ class CsvHandler:
     def __init__(self):
         self._csv_file = None
         self._csv_writer = None
-        self._path_string = r'C:\Users\ML-2\Documents\GitHub\zed-sdk\UWBE_PROJECT\csv'
+        self._path_string = r'C:\Users\ML-2\Documents\GitHub\zed-sdk\UWBE_PROJECT\csv' # Csv save directory
     def setup_csv(self, csv_name):
         if not os.path.exists(self._path_string):
             os.makedirs(self._path_string)

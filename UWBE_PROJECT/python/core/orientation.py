@@ -1,3 +1,7 @@
+"""
+Get orientation of camera
+"""
+
 import pyzed.sl as sl
 from numpy import pi
 

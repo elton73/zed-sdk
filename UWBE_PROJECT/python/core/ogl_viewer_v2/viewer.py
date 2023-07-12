@@ -641,7 +641,7 @@ class GLViewer:
         glLoadIdentity()
         glOrtho(0, width, 0, height, -1, 1)  # Adjust the orthographic projection to match your viewport dimensions
 
-        glColor3f(255.0, 0.0, 0.0)  # Sets the color to red (RGB values: 1.0, 0.0, 0.0)
+        glColor3f(0.0, 0.0, 0.0)  # Sets the color to red (RGB values: 1.0, 0.0, 0.0)
 
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
@@ -650,30 +650,6 @@ class GLViewer:
         for i in range(len(self.time)):
             glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ctypes.c_int(ord(self.time[i])))
         glFlush()
-
-        # if len(self.objects_name) > 0:
-        #     for obj in self.objects_name:
-        #         pt2d = self.compute_3D_projection(obj.position, self.projection, wnd_size)
-        #         glColor4f(obj.color[0], obj.color[1], obj.color[2], obj.color[3])
-        #         glWindowPos2f(pt2d[0], pt2d[1])
-        #         for i in range(len(obj.name)):
-        #             glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ctypes.c_int(ord(obj.name[i])))
-        #         y = glGetFloatv(GL_CURRENT_RASTER_POSITION)[1]
-        #         glWindowPos2f(pt2d[0], y - glutBitmapHeight(GLUT_BITMAP_HELVETICA_18))
-        #         if self.tracking_type == "velocity":
-        #             for i in range(len(obj.velocity)):
-        #                 glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ctypes.c_int(ord(obj.velocity[i])))
-        #         elif self.tracking_type == "position":
-        #             for i in range(len(obj.positions)):
-        #                 glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ctypes.c_int(ord(obj.positions[i])))
-        #             y = glGetFloatv(GL_CURRENT_RASTER_POSITION)[1]
-        #             glWindowPos2f(pt2d[0], y - glutBitmapHeight(GLUT_BITMAP_HELVETICA_18))
-        #             for i in range(len(obj.displacement)):
-        #                 glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ctypes.c_int(ord(obj.displacement[i])))
-        #         elif self.tracking_type == "time":
-        #             for i in range(len(obj.timestamp)):
-        #                 glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ctypes.c_int(ord(obj.timestamp[i])))
-        #     glEnable(GL_BLEND)
 
     def compute_3D_projection(self, _pt, _cam, _wnd_size):
         pt4d = np.array([_pt[0],_pt[1],_pt[2], 1], np.float32)

@@ -1,3 +1,7 @@
+"""
+Viewer for object detection
+"""
+
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from threading import Lock
@@ -485,12 +489,13 @@ class GLViewer:
     """
     Class that manages the rendering in OpenGL
     """
-    def __init__(self):
+    def __init__(self, timestamp):
         self.available = False
         self.objects_name = []
         self.mutex = Lock()
         # Show tracked objects only
         self.is_tracking_on = False
+        self.time = timestamp
 
         #Switch between tracking velocity, position, or time
         self.tracking_type = "velocity"
@@ -694,6 +699,20 @@ class GLViewer:
         wnd_size.width = glutGet(GLUT_WINDOW_WIDTH)
         wnd_size.height = glutGet(GLUT_WINDOW_HEIGHT)
 
+        # settings for timestamp in bottom right
+        width = (int)(wnd_size.width*0.9)
+        height = (int)(wnd_size.height*0.9)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        glOrtho(0, width, 0, height, -1, 1)  # Adjust the orthographic projection to match your viewport dimensions
+        glColor3f(0.0, 0.0, 0.0)  # Sets the color to red (RGB values: 1.0, 0.0, 0.0)
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+        glRasterPos2f(width - 165 - 10, 20)  # Adjust the position based on the text size and desired margin
+        for i in range(len(self.time)):
+            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ctypes.c_int(ord(self.time[i])))
+        glFlush()
+
         if len(self.objects_name) > 0:
             for obj in self.objects_name:
                 pt2d = self.compute_3D_projection(obj.position, self.projection, wnd_size)
@@ -713,9 +732,6 @@ class GLViewer:
                     glWindowPos2f(pt2d[0], y - glutBitmapHeight(GLUT_BITMAP_HELVETICA_18))
                     for i in range(len(obj.displacement)):
                         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ctypes.c_int(ord(obj.displacement[i])))
-                elif self.tracking_type == "time":
-                    for i in range(len(obj.timestamp)):
-                        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, ctypes.c_int(ord(obj.timestamp[i])))
             glEnable(GL_BLEND)
 
     def compute_3D_projection(self, _pt, _cam, _wnd_size):

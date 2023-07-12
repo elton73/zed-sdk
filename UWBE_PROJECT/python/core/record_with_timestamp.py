@@ -5,7 +5,6 @@ import ogl_viewer_v2.viewer as gl
 import sys
 import pyzed.sl as sl
 import os
-import time
 from signal import signal, SIGINT
 
 cam = sl.Camera()
@@ -31,7 +30,7 @@ def get_recording_output():
 
 def main():
     init = sl.InitParameters()
-    init.camera_resolution = sl.RESOLUTION.HD720
+    init.camera_resolution = sl.RESOLUTION.HD1080
     init.depth_mode = sl.DEPTH_MODE.NONE
 
     status = cam.open(init)
@@ -54,7 +53,6 @@ def main():
     viewer.init(camera_info.camera_configuration.calibration_parameters.left_cam, False)
 
     # Create ZED objects filled in the main loop
-    objects = sl.Objects()
     image = sl.Mat()
 
     # Set runtime parameters

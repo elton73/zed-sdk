@@ -64,8 +64,8 @@ if __name__ == "__main__":
     body_param = sl.BodyTrackingParameters()
     body_param.enable_tracking = True                # Track people across images flow
     body_param.enable_body_fitting = False            # Smoqoth skeleton move
-    body_param.detection_model = sl.BODY_TRACKING_MODEL.HUMAN_BODY_FAST 
-    body_param.body_format = sl.BODY_FORMAT.BODY_18  # Choose the BODY_FORMAT you wish to use
+    body_param.detection_model = sl.BODY_TRACKING_MODEL.HUMAN_BODY_ACCURATE #OR ACCURATE?
+    body_param.body_format = sl.BODY_FORMAT.BODY_70  # Choose the BODY_FORMAT you wish to use
 
     # Enable Object Detection module
     zed.enable_body_tracking(body_param)
@@ -96,6 +96,9 @@ if __name__ == "__main__":
             zed.retrieve_image(image, sl.VIEW.LEFT, sl.MEM.CPU, display_resolution)
             # Retrieve bodies
             zed.retrieve_bodies(bodies, body_runtime_param)
+            for body in bodies.body_list:
+                print(body.id)
+                print(body.keypoint)
 
             # Update GL view
             viewer.update_view(image, bodies) 

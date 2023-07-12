@@ -1,31 +1,11 @@
-########################################################################
-#
-# Copyright (c) 2022, STEREOLABS.
-#
-# All rights reserved.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
-########################################################################
-
 """
-    This sample shows how to detect objects and draw 3D bounding boxes around them
-    in an OpenGL window
+Detect people and save their positioning data to a csv
 """
 import sys
 import ogl_viewer.viewer as gl
 import pyzed.sl as sl
 from UWBE_PROJECT.python.utils.csv_handler import CsvHandler
+from UWBE_PROJECT.python.utils.conversions import calculate_magnitude
 import time
 
 if __name__ == "__main__":
@@ -55,7 +35,7 @@ if __name__ == "__main__":
     # Defines if the object detection will track objects across images flow.
     obj_param.enable_tracking = True       # if True, enable positional tracking
 
-    obj_param.detection_model = sl.OBJECT_DETECTION_MODEL.MULTI_CLASS_BOX_MEDIUM
+    obj_param.detection_model = sl.OBJECT_DETECTION_MODEL.MULTI_CLASS_BOX_ACCURATE
 
     if obj_param.enable_tracking:
         zed.enable_positional_tracking()
@@ -63,8 +43,9 @@ if __name__ == "__main__":
     zed.enable_object_detection(obj_param)
 
     camera_info = zed.get_camera_information()
+    timestamp = str(zed.get_timestamp(sl.TIME_REFERENCE.IMAGE).get_microseconds() / 1000000.0)
     # Create OpenGL viewer
-    viewer = gl.GLViewer()
+    viewer = gl.GLViewer(timestamp)
     viewer.init(camera_info.camera_configuration.calibration_parameters.left_cam, obj_param.enable_tracking)
 
     # Configure object detection runtime parameters
@@ -79,15 +60,18 @@ if __name__ == "__main__":
     # Set runtime parameters
     runtime_parameters = sl.RuntimeParameters()
 
+    # Setup tracking type: velocity or position
+    viewer.tracking_type = "velocity"
     # Setup csv handler
-    save_to_csv = False       # if True, save to CSV
+    save_to_csv = True       # if True, save to CSV
     if save_to_csv:
         csv_handler = CsvHandler()
-        csv_handler.setup_csv("Velocities")
-        csv_handler.write_csv(["ID", "Velocities", "Position", "Action State", "Time"])
-    # Setup tracking type: velocity, positions, or time
-    viewer.tracking_type = "time"
+        csv_handler.setup_csv("Raw_Data")
+        csv_handler.write_csv(["ID", "Velocities(x)", "Velocities(y)", "Velocities(z)", "Velocities(m)", "Distance(x)", "Distance(y)", "Distance(z)", "Distance(m)", "Action State", "Time"])
 
+
+    frames = 0
+    time_time = time.time()
     while viewer.is_available():
         # Grab an image, a RuntimeParameters object must be given to grab()
         if zed.grab(runtime_parameters) == sl.ERROR_CODE.SUCCESS:
@@ -96,12 +80,18 @@ if __name__ == "__main__":
             # Retrieve objects
             zed.retrieve_objects(objects, obj_runtime_param)
             # Update GL view
+            timestamp = str(zed.get_timestamp(sl.TIME_REFERENCE.IMAGE).get_microseconds() / 1000000.0)
             viewer.update_view(image, objects)
+            frames += 1
+            if frames == 60:
+                print(time.time() - time_time)
+                time_time = time.time()
+                frames = 0
             # Update CSV file
             if save_to_csv and objects.is_new:
                 for _obj in objects.object_list:
                     actual_position = [_obj.position[0], -float(_obj.position[2]), _obj.position[1]]
-                    csv_handler.write_csv([_obj.id, _obj.velocity, actual_position, _obj.action_state, (objects.timestamp.get_microseconds())/1000000.0])
+                    csv_handler.write_csv([_obj.id, _obj.velocity[0], _obj.velocity[1], _obj.velocity[2], calculate_magnitude(_obj.velocity), _obj.position[0], -float(_obj.position[2]), _obj.position[1], calculate_magnitude(actual_position), _obj.action_state, (objects.timestamp.get_microseconds())/1000000.0])
 
     viewer.exit()
 
