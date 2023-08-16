@@ -12,3 +12,4 @@ pyzed @ file:///C:/Program%20Files%20%28x86%29/ZED%20SDK/pyzed-4.0-cp310-cp310-w
 requests==2.31.0
 urllib3==2.0.3
 yarg==0.1.9
+matplotlib-3.7.2

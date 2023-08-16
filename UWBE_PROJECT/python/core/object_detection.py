@@ -7,10 +7,14 @@ import pyzed.sl as sl
 from UWBE_PROJECT.python.utils.csv_handler import CsvHandler
 from UWBE_PROJECT.python.utils.conversions import calculate_magnitude
 import time
+from UWBE_PROJECT.python.utils.directory_gui import browse_directory
 
 if __name__ == "__main__":
     # Create a Camera object
     zed = sl.Camera()
+    save_to_csv = True  # if True, save to CSV
+    if not save_to_csv:
+        print("Save is off")
 
     # Create a InitParameters object and set configuration parameters
     init_params = sl.InitParameters()
@@ -24,11 +28,20 @@ if __name__ == "__main__":
         print("Using SVO file: {0}".format(filepath))
         init_params.set_from_svo_file(filepath)
 
-
     # Open the camera
     err = zed.open(init_params)
     if err != sl.ERROR_CODE.SUCCESS:
         exit(1)
+
+    # Setup csv handler
+    if save_to_csv:
+        csv_handler = CsvHandler()
+        path = browse_directory()
+        if path == "q":
+            quit()
+        csv_handler.set_custom_path(path)
+        csv_handler.setup_csv("raw_data")
+        csv_handler.write_csv(["ID", "Velocities(x)", "Velocities(y)", "Velocities(z)", "Velocities(m)", "Distance(x)", "Distance(y)", "Distance(z)", "Distance(m)", "Action State", "Time"])
 
     # Enable object detection module
     obj_param = sl.ObjectDetectionParameters()
@@ -46,7 +59,7 @@ if __name__ == "__main__":
     timestamp = str(zed.get_timestamp(sl.TIME_REFERENCE.IMAGE).get_microseconds() / 1000000.0)
     # Create OpenGL viewer
     viewer = gl.GLViewer(timestamp)
-    viewer.init(camera_info.camera_configuration.calibration_parameters.left_cam, obj_param.enable_tracking)
+    viewer.init(camera_info.camera_configuration.calibration_parameters.right_cam, obj_param.enable_tracking)
 
     # Configure object detection runtime parameters
     obj_runtime_param = sl.ObjectDetectionRuntimeParameters()
@@ -62,13 +75,6 @@ if __name__ == "__main__":
 
     # Setup tracking type: velocity or position
     viewer.tracking_type = "velocity"
-    # Setup csv handler
-    save_to_csv = True       # if True, save to CSV
-    if save_to_csv:
-        csv_handler = CsvHandler()
-        csv_handler.setup_csv("Raw_Data")
-        csv_handler.write_csv(["ID", "Velocities(x)", "Velocities(y)", "Velocities(z)", "Velocities(m)", "Distance(x)", "Distance(y)", "Distance(z)", "Distance(m)", "Action State", "Time"])
-
 
     frames = 0
     time_time = time.time()
@@ -76,7 +82,7 @@ if __name__ == "__main__":
         # Grab an image, a RuntimeParameters object must be given to grab()
         if zed.grab(runtime_parameters) == sl.ERROR_CODE.SUCCESS:
             # Retrieve left image
-            zed.retrieve_image(image, sl.VIEW.LEFT)
+            zed.retrieve_image(image, sl.VIEW.RIGHT)
             # Retrieve objects
             zed.retrieve_objects(objects, obj_runtime_param)
             # Update GL view
@@ -101,4 +107,4 @@ if __name__ == "__main__":
 
     zed.close()
 
-    #C:\Users\ML-2\Documents\GitHub\zed-sdk\UWBE_PROJECT\python\core\object_detection.py C:\Users\ML-2\Documents\GitHub\zed-sdk\UWBE_PROJECT\recordings\recording_1.svo
+    #C:\Users\ML-2\Documents\GitHub\zed-sdk\UWBE_PROJECT\python\core\object_detection.py C:\Users\ML-2\Documents\GitHub\UWBE\csv\200000652\experiments\moving_experiment\ILS\setup_2\zed_comparison\zed_video\recording_1.svo

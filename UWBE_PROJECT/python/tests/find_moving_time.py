@@ -12,21 +12,17 @@ if __name__ == '__main__':
         idle_time = 0.0
 
         dataset.pop(0)
-        start_time = None
-        action_state = None
+        start_time = float(dataset[0][10])
 
         for data in dataset:
+            action_state = data[9]
             if str(data[0]) == obj_id:
-                if not action_state:
-                    action_state = data[3]
-                    start_time = data[4]
-                elif data[3] != action_state:
-                    if action_state == "IDLE":
-                        idle_time += (float(data[4]) - float(start_time))
-                    elif action_state == "MOVING":
-                        moving_time += (float(data[4]) - float(start_time))
-                    start_time = data[4]
-                    action_state = data[3]
+                if action_state == "IDLE":
+                    idle_time += (float(data[10]) - start_time)
+                elif action_state == "MOVING":
+                    moving_time += (float(data[10]) - start_time)
+                start_time = float(data[10])
+
         print(f"Moving_time: {moving_time}")
         print(f"IDLE_time: {idle_time}")
         print("\n")

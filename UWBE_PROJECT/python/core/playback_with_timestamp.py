@@ -29,7 +29,7 @@ def main():
     timestamp = str(cam.get_timestamp(sl.TIME_REFERENCE.IMAGE).get_microseconds() / 1000000.0)
     # Create OpenGL viewer
     viewer = gl.GLViewer(timestamp)
-    viewer.init(camera_info.camera_configuration.calibration_parameters.left_cam, False)
+    viewer.init(camera_info.camera_configuration.calibration_parameters.right_cam, False)
 
     image = sl.Mat()
 
@@ -37,7 +37,7 @@ def main():
     runtime_parameters = sl.RuntimeParameters()
 
     # set playback speed parameters
-    fps = 60
+    fps = 30
     framedelay = 1.0/fps
     time_perf = time.perf_counter()
 
@@ -45,7 +45,7 @@ def main():
         # Grab an image, a RuntimeParameters object must be given to grab()
         if cam.grab(runtime_parameters) == sl.ERROR_CODE.SUCCESS:
             # Retrieve left image
-            cam.retrieve_image(image, sl.VIEW.LEFT)
+            cam.retrieve_image(image, sl.VIEW.RIGHT)
             # Add time delay for playback speed
             timestamp = str(cam.get_timestamp(sl.TIME_REFERENCE.IMAGE).get_microseconds()/1000000.0)
             time_elapsed = time.perf_counter() - time_perf
@@ -56,12 +56,12 @@ def main():
             time_perf = time.perf_counter()
 
             #debug
-            # current_fps = 1/(time.perf_counter()-time_perf)
-            # print(current_fps)
+            current_fps = 1/(time.perf_counter()-time_perf)
+            print(current_fps)
 
 
 
 if __name__ == "__main__":
     main()
 
-#C:\Users\ML-2\Documents\GitHub\zed-sdk\UWBE_PROJECT\python\core\playback_with_timestamp.py C:\Users\ML-2\Documents\GitHub\zed-sdk\UWBE_PROJECT\recordings\recording_1.svo
+#C:\Users\ML-2\Documents\GitHub\zed-sdk\UWBE_PROJECT\python\core\playback_with_timestamp.py C:\Users\ML-2\Documents\GitHub\UWBE\csv\200000652\experiments\moving_experiment\ILS\setup_2\zed_comparison\zed_video\recording_1.svo

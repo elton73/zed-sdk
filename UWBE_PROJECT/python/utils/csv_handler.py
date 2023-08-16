@@ -5,16 +5,16 @@ class CsvHandler:
     def __init__(self):
         self._csv_file = None
         self._csv_writer = None
-        self._path_string = r'C:\Users\ML-2\Documents\GitHub\zed-sdk\UWBE_PROJECT\csv' # Csv save directory
+        self.path_string = r'C:\Users\ML-2\Documents\GitHub\zed-sdk\UWBE_PROJECT\csv' # Csv save directory
     def setup_csv(self, csv_name):
-        if not os.path.exists(self._path_string):
-            os.makedirs(self._path_string)
+        if not os.path.exists(self.path_string):
+            os.makedirs(self.path_string)
 
         counter = 1
-        output_csv = os.path.join(self._path_string, f"{csv_name}_{counter}.csv")
+        output_csv = os.path.join(self.path_string, f"{csv_name}_{counter}.csv")
         while os.path.exists(output_csv):
             counter += 1
-            output_csv = os.path.join(self._path_string, f"{csv_name}_{counter}.csv")
+            output_csv = os.path.join(self.path_string, f"{csv_name}_{counter}.csv")
         self._csv_file = open(output_csv, 'w', newline='')
         self._csv_writer = csv.writer(self._csv_file)
 
@@ -29,7 +29,11 @@ class CsvHandler:
             self._csv_file = None
 
     def read_csv(self):
-        return choose_csv(self._path_string)
+        return choose_csv(self.path_string)
+
+    def set_custom_path(self, new_path):
+        self.path_string = new_path
+
 
 
 

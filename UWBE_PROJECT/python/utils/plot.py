@@ -1,5 +1,6 @@
 from UWBE_PROJECT.python.utils.csv_handler import CsvHandler
 from UWBE_PROJECT.python.utils.inputs import get_object_id
+from matplotlib import pyplot as plt
 
 if __name__ == '__main__':
     csv_handler = CsvHandler()
@@ -9,9 +10,14 @@ if __name__ == '__main__':
     for dataset in datasets:
 
         dataset.pop(0)
+        time_start = float(dataset[0][10])
         timestamps = []
         velocities = []
         for data in dataset:
-            print(data)
+            if str(data[0]) == obj_id:
+                velocities.append(float(data[4]))
+                timestamps.append(float(data[10])-time_start)
+        plt.plot(timestamps, velocities)
+        plt.show()
 
 

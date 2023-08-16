@@ -27,6 +27,11 @@ def choose_csv(recording_path):
         else:
             print("Invalid Input. Please Try Again")
 
+def choose_output_folder():
+    user_input = str(input("Enter output directory: "))
+    return user_input
+
+
 def get_object_id():
     user_input = input("Enter object id: ")
     if user_input == "q":
