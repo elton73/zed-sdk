@@ -18,7 +18,10 @@ def handler(signal_received, frame):
 signal(SIGINT, handler)
 
 def get_recording_output():
+    print("Choose where to save recording.")
     path_string = browse_directory()
+    if path_string == "q":
+        return "q"
     if not os.path.exists(path_string):
         os.makedirs(path_string)
     dir = path_string
@@ -30,6 +33,9 @@ def get_recording_output():
     return output
 
 def main():
+    path_output = get_recording_output()
+    if path_output == "q":
+        return
     init = sl.InitParameters()
     init.camera_resolution = sl.RESOLUTION.HD1080
     init.depth_mode = sl.DEPTH_MODE.NONE
@@ -39,7 +45,6 @@ def main():
         print(repr(status))
         exit(1)
 
-    path_output = get_recording_output()
     recording_param = sl.RecordingParameters(path_output, sl.SVO_COMPRESSION_MODE.H264)
     err = cam.enable_recording(recording_param)
     if err != sl.ERROR_CODE.SUCCESS:
@@ -59,7 +64,7 @@ def main():
     # Set runtime parameters
     runtime_parameters = sl.RuntimeParameters()
 
-    print("SVO is Recording, use Ctrl-C to stop.")
+    print("SVO is Recording.")
 
     while viewer.is_available():
         # Grab an image, a RuntimeParameters object must be given to grab()

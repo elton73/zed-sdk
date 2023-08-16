@@ -7,12 +7,12 @@ import pyzed.sl as sl
 from UWBE_PROJECT.python.utils.csv_handler import CsvHandler
 from UWBE_PROJECT.python.utils.conversions import calculate_magnitude
 import time
-from UWBE_PROJECT.python.utils.directory_gui import browse_directory
+from UWBE_PROJECT.python.utils.directory_gui import browse_directory, choose_recording
 
 if __name__ == "__main__":
     # Create a Camera object
     zed = sl.Camera()
-    save_to_csv = True  # if True, save to CSV
+    save_to_csv = False  # if True, save to CSV
     if not save_to_csv:
         print("Save is off")
 
@@ -23,8 +23,9 @@ if __name__ == "__main__":
 
     # If applicable, use the SVO given as parameter
     # Otherwise use ZED live stream
-    if len(sys.argv) == 2:
-        filepath = sys.argv[1]
+    print("Choose a recording else live camera will be used.")
+    filepath = choose_recording()
+    if filepath:
         print("Using SVO file: {0}".format(filepath))
         init_params.set_from_svo_file(filepath)
 
@@ -36,6 +37,7 @@ if __name__ == "__main__":
     # Setup csv handler
     if save_to_csv:
         csv_handler = CsvHandler()
+        print("Choose where to save csv.")
         path = browse_directory()
         if path == "q":
             quit()

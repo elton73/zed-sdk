@@ -13,3 +13,16 @@ def browse_directory():
     else:
         print("No directory selected.")
         return "q"
+
+
+def choose_recording():
+    root = tk.Tk()
+    root.withdraw()
+    # Open the file dialog for a single CSV file selection
+    file_path = filedialog.askopenfilename(filetypes=[("SVO files", "*.svo")])
+    if file_path:
+        return file_path
+    else:
+        print("No SVO file selected.")
+        return None
+
